@@ -44,12 +44,14 @@ class Qnet(nn.Module):
         super(Qnet, self).__init__()
         self.fc1 = nn.Linear(6, 128)
         self.fc2 = nn.Linear(128, 128)
-        self.fc3 = nn.Linear(128, 3)
+#        self.fc3 = nn.Linear(128, 128) # 성능 향상을 위하 신경망 하나를 추가해 봄
+        self.fc4 = nn.Linear(128, 3)
 
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = self.fc3(x)
+ #       x = F.relu(self.fc3(x))
+        x = self.fc4(x)
         return x
 
     def sample_action(self, obs, epsilon):
@@ -82,7 +84,7 @@ def train(q, q_target, memory, optimizer):
         optimizer.step()
 
 def main():
-    env = gym.make('Acrobot-v1') #render_mode='human' > 이해를 돕기 위해 이미지 게임 이미지 띄움
+    env = gym.make('Acrobot-v1') #render_mode='human' > 이해를 돕기 위해 이미지 위해서 사용
     q = Qnet()
     q_target = Qnet()
     q_target.load_state_dict(q.state_dict()) # 파라메타까지 같은 DQN을 생성
